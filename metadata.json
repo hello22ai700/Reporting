@@ -1,0 +1,6 @@
+{
+  "name": "ReportCraft AI - Smart Report Generator & Multi-Format Editor",
+  "description": "Convert prompts and raw data into executive reports with interactive charts, full live editing, and instant export to PDF, Word (DOCX), PowerPoint (PPTX), and Excel (XLSX).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
