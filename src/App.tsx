@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { GeneratedReport, ReportTheme, THEME_CONFIGS } from './types/report';
+import { generateLocalReport } from './utils/reportGenerator';
 import { ReportViewMode } from './components/ReportViewMode';
 import { ReportEditMode } from './components/ReportEditMode';
 import { ReportDownloader } from './components/ReportDownloader';
@@ -139,20 +140,24 @@ export default function App() {
         }),
       });
 
-      if (!res.ok) {
-        throw new Error(`Server returned status: ${res.status}`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.report) {
+          setReport(json.report);
+          setActiveTab('view');
+          return;
+        }
       }
-
-      const json = await res.json();
-      if (json.report) {
-        setReport(json.report);
-        setActiveTab('view');
-      } else {
-        throw new Error('Invalid report structure received');
-      }
+      
+      // Fallback if server route returned non-200 or running statically
+      const localReport = generateLocalReport(prompt, rawData, reportTitle);
+      setReport(localReport);
+      setActiveTab('view');
     } catch (err: any) {
-      console.error('Failed to generate report:', err);
-      setErrorMsg(err?.message || 'Failed to generate report. Please try again.');
+      console.warn('Backend unavailable, using client-side report generator:', err);
+      const localReport = generateLocalReport(prompt, rawData, reportTitle);
+      setReport(localReport);
+      setActiveTab('view');
     } finally {
       setIsGenerating(false);
     }
